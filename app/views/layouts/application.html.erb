@@ -14,8 +14,7 @@
         <h3 class="brand"><%= link_to "PlannerMan", "/" %></h3>
         <ul class="nav">
           <li class="<%= controller.controller_path == 'planners' ? 'active' : '' %>"><a href="<%= planners_path %>">Planners</a></li>
-          <li><%= link_to "Link2", "/path2"  %></li>
-          <li><%= link_to "Link3", "/path3"  %></li>
+          <li class="<%= controller.controller_path == 'domains' ? 'active' : '' %>"><a href="<%= domains_path %>">Domains</a></li>
       </div>
     </div>
   </div>
@@ -25,8 +24,7 @@
         <h5>Sidebar</h5>
         <ul>
           <li class="<%= controller.controller_path == 'planners' ? 'active' : '' %>"><a href="<%= planners_path %>">Planners</a></li>
-          <li><%= link_to "Link2", "/path2"  %></li>
-          <li><%= link_to "Link3", "/path3"  %></li>
+          <li class="<%= controller.controller_path == 'domains' ? 'active' : '' %>"><a href="<%= domains_path %>">Domains</a></li>
         </ul>
       </div>
     </div>

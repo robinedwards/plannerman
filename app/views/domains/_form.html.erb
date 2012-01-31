@@ -1,0 +1,11 @@
+
+<div class="clearfix">
+   <%= f.label :name, t("activerecord.attributes.domain.name", :default => "Name"), :class => :label %>
+  <div class="input">
+    <%= f.text_field :name, :class => 'text_field' %>
+  </div>
+</div>
+<div class="actions">
+  <button class="btn primary" type="submit">Save</button> or
+  <%= link_to "Cancel", domains_path, :class => 'btn primary' %>
+</div>

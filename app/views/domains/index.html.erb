@@ -1,0 +1,28 @@
+<h1>Domains</h1>
+<table class="zebra-striped">
+ <thead>
+  <tr>
+    <th>
+      <%= t("activerecord.attributes.domain.name", :default => t("activerecord.labels.name", :default => "Name")) %>
+    </th>
+    <th>Created at</th>
+    <th>Actions</th>
+  </tr>
+  </thead>
+  <tbody>
+  <% @domains.each do |domain| -%>
+   <tr>
+    <td><%= link_to domain.name, domain_path(domain) %>
+    </td>
+    <td><%= domain.created_at %></td>
+    <td>
+      <%= link_to "Show", domain_path(domain) %>
+      <%= link_to "Edit", edit_domain_path(domain) %>
+      <%= link_to "Destroy", domain_path(domain), :method => :delete, :confirm => "#{t("web-app-theme.confirm", :default => "Are you sure?")}" %>
+    </td>
+    </tr>
+    <% end -%>
+   </tbody>
+</table>
+
+<%= link_to "New", new_domain_path, :class => 'btn primary' %>

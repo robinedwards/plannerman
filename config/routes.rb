@@ -1,5 +1,7 @@
 PlannerMan::Application.routes.draw do
 
+  resources :domains
+
   resources :planners
 
   root :to => "home#index"

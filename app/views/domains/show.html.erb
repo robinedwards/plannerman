@@ -1,0 +1,8 @@
+
+<label class="label"><%= t("activerecord.attributes.domain.name", :default => t("activerecord.labels.name", :default => "Name")) %>:</label>
+<p><%= @domain.name %></p>
+<div class="actions">
+<%= link_to "Back", domains_path, :class => 'btn primary'  %>
+<%= link_to "Edit", edit_domain_path(@domain), :class => 'btn primary' %>
+<%= link_to "Delete", domain_path(@domain), :method => "delete", :confirm => "#{t("web-app-theme.confirm", :default => "Are you sure?")}", :class => 'btn primary' %>
+</div>
