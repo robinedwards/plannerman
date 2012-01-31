@@ -1,0 +1,11 @@
+
+<label class="label"><%= t("activerecord.attributes.problem.name", :default => t("activerecord.labels.name", :default => "Name")) %>:</label>
+<p><%= @problem.name %></p>
+
+<label class="label"><%= t("activerecord.attributes.problem.subdomain_id", :default => t("activerecord.labels.subdomain_id", :default => "Subdomain")) %>:</label>
+<p><%= @problem.subdomain_id %></p>
+<div class="actions">
+<%= link_to "Back", problems_path, :class => 'btn primary'  %>
+<%= link_to "Edit", edit_problem_path(@problem), :class => 'btn primary' %>
+<%= link_to "Delete", problem_path(@problem), :method => "delete", :confirm => "#{t("web-app-theme.confirm", :default => "Are you sure?")}", :class => 'btn primary' %>
+</div>

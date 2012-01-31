@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120131160157) do
+ActiveRecord::Schema.define(:version => 20120131165814) do
 
   create_table "domains", :force => true do |t|
     t.string   "name"
@@ -26,5 +26,23 @@ ActiveRecord::Schema.define(:version => 20120131160157) do
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end
+
+  create_table "problems", :force => true do |t|
+    t.string   "name"
+    t.integer  "subdomain_id"
+    t.datetime "created_at",   :null => false
+    t.datetime "updated_at",   :null => false
+  end
+
+  add_index "problems", ["subdomain_id"], :name => "index_problems_on_subdomain_id"
+
+  create_table "subdomains", :force => true do |t|
+    t.string   "name"
+    t.integer  "domain_id"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+  end
+
+  add_index "subdomains", ["domain_id"], :name => "index_subdomains_on_domain_id"
 
 end

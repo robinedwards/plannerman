@@ -5,6 +5,7 @@
     <th>
       <%= t("activerecord.attributes.domain.name", :default => t("activerecord.labels.name", :default => "Name")) %>
     </th>
+    <th>Subdomains</th>
     <th>Created at</th>
     <th>Actions</th>
   </tr>
@@ -14,6 +15,7 @@
    <tr>
     <td><%= link_to domain.name, domain_path(domain) %>
     </td>
+    <td><%= domain.subdomains.count %></td>
     <td><%= domain.created_at %></td>
     <td>
       <%= link_to "Show", domain_path(domain) %>

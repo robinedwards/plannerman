@@ -1,0 +1,25 @@
+<h1>Problems</h1>
+<table class="zebra-striped">
+ <thead>
+  <tr>
+    <th>Name</th>
+    <th>Domain</th>
+    <th>Subdomain</th>
+    <th>Created at</th>
+    <th>Actions</th>
+  </tr>
+  </thead>
+  <tbody>
+  <% @problems.each do |problem| -%>
+   <tr>
+    <td><%= link_to problem.name, problem_path(problem) %> </td>
+    <td><%= problem.subdomain.domain.name %></td>
+    <td><%= problem.subdomain.name %></td>
+    <td><%= problem.created_at %></td>
+    <td>
+      <%= link_to "Show", problem_path(problem) %>
+    </td>
+    </tr>
+    <% end -%>
+   </tbody>
+</table>

@@ -1,6 +1,7 @@
 PlannerMan::Application.routes.draw do
-
+  resources :subdomains
   resources :domains
+  resources :problems
 
   resources :planners
 

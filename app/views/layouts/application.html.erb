@@ -25,7 +25,7 @@
         <ul>
           <li class="<%= controller.controller_path == 'planners' ? 'active' : '' %>"><a href="<%= planners_path %>">Planners</a></li>
           <li class="<%= controller.controller_path == 'domains' ? 'active' : '' %>"><a href="<%= domains_path %>">Domains</a></li>
-        </ul>
+          <li class="<%= controller.controller_path == 'subdomains' ? 'active' : '' %>"><a href="<%= subdomains_path %>">Subdomains</a></li> <li class="<%= controller.controller_path == 'problems' ? 'active' : '' %>"><a href="<%= problems_path %>">Problems</a></li></ul>
       </div>
     </div>
     <div class="content" style="padding-top: 70px">
