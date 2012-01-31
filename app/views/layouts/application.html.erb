@@ -13,25 +13,24 @@
       <div class="container">
         <h3 class="brand"><%= link_to "PlannerMan", "/" %></h3>
         <ul class="nav">
-          <li><%= link_to "Link1", "/path1"  %></li>
+          <li class="<%= controller.controller_path == 'planners' ? 'active' : '' %>"><a href="<%= planners_path %>">Planners</a></li>
           <li><%= link_to "Link2", "/path2"  %></li>
           <li><%= link_to "Link3", "/path3"  %></li>
-        </ul>
       </div>
     </div>
   </div>
   <div class="container-fluid">
     <div class="sidebar">
-      <div class="well">
+      <div class="well" style="padding-top: 70px">
         <h5>Sidebar</h5>
         <ul>
-          <li><%= link_to "Link1", "/path1"  %></li>
+          <li class="<%= controller.controller_path == 'planners' ? 'active' : '' %>"><a href="<%= planners_path %>">Planners</a></li>
           <li><%= link_to "Link2", "/path2"  %></li>
           <li><%= link_to "Link3", "/path3"  %></li>
         </ul>
       </div>
     </div>
-    <div class="content">
+    <div class="content" style="padding-top: 70px">
       <%= yield %>
     </div>
   </div>

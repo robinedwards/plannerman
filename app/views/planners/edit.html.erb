@@ -1,0 +1,4 @@
+<%= form_for @planner, :url => planner_path(@planner), :html => { :class => "edit_planner", :id => "edit_planner" } do |f| -%>
+  <input name="_method" type="hidden" value="put" />
+  <%= render :partial => "form", :locals => {:f => f} %>
+<% end -%>
