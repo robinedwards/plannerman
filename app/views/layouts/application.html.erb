@@ -5,12 +5,13 @@
   <%= stylesheet_link_tag    "application" %>
   <%= javascript_include_tag "application" %>
   <%= csrf_meta_tags %>
+  <link href="http://twitter.github.com/bootstrap/1.4.0/bootstrap.min.css" rel="stylesheet">
 </head>
-<body style="padding-top: 60px">
-  <div class="navbar">
-    <div class="navbar-inner">
-      <div class="container-fluid">
-        <h3><%= link_to "PlannerMan", "/" %></h3>
+<body style="padding-top: 10px">
+  <div class="topbar">
+    <div class="fill">
+      <div class="container">
+        <h3 class="brand"><%= link_to "PlannerMan", "/" %></h3>
         <ul class="nav">
           <li><%= link_to "Link1", "/path1"  %></li>
           <li><%= link_to "Link2", "/path2"  %></li>
