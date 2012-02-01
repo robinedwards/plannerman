@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120131165814) do
+ActiveRecord::Schema.define(:version => 20120131181459) do
 
   create_table "domains", :force => true do |t|
     t.string   "name"
@@ -35,6 +35,26 @@ ActiveRecord::Schema.define(:version => 20120131165814) do
   end
 
   add_index "problems", ["subdomain_id"], :name => "index_problems_on_subdomain_id"
+
+  create_table "solutions", :force => true do |t|
+    t.integer  "planner_id"
+    t.integer  "domain_id"
+    t.integer  "subdomain_id"
+    t.integer  "problem_id"
+    t.integer  "plan_quality"
+    t.integer  "second_plan_quality"
+    t.integer  "steps"
+    t.string   "notes"
+    t.string   "full_solution"
+    t.string   "full_raw_output"
+    t.datetime "created_at",          :null => false
+    t.datetime "updated_at",          :null => false
+  end
+
+  add_index "solutions", ["domain_id"], :name => "index_solutions_on_domain_id"
+  add_index "solutions", ["planner_id"], :name => "index_solutions_on_planner_id"
+  add_index "solutions", ["problem_id"], :name => "index_solutions_on_problem_id"
+  add_index "solutions", ["subdomain_id"], :name => "index_solutions_on_subdomain_id"
 
   create_table "subdomains", :force => true do |t|
     t.string   "name"

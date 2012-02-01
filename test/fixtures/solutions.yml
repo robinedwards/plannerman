@@ -1,0 +1,25 @@
+# Read about fixtures at http://api.rubyonrails.org/classes/ActiveRecord/Fixtures.html
+
+one:
+  planner: 
+  domain: 
+  subdomain: 
+  problem: 
+  plan_quality: 1
+  second_plan_quality: 1
+  steps: 1
+  notes: MyString
+  full_solution: MyString
+  full_raw_output: MyString
+
+two:
+  planner: 
+  domain: 
+  subdomain: 
+  problem: 
+  plan_quality: 1
+  second_plan_quality: 1
+  steps: 1
+  notes: MyString
+  full_solution: MyString
+  full_raw_output: MyString

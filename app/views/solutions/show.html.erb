@@ -1,0 +1,12 @@
+<%= render :partial => "details", :locals => {:solution => @solution} =%>
+
+<div class="clearfix">
+   <label class="label">Notes</label>
+   <p> <%= @solution.notes %></p>
+</div>
+
+<div class="actions">
+<%= link_to "Back", solutions_path, :class => 'btn primary'  %>
+<%= link_to "Add or edit notes", edit_solution_path(@solution), :class => 'btn primary' %>
+<%= link_to "Delete", solution_path(@solution), :method => "delete", :confirm => "#{t("web-app-theme.confirm", :default => "Are you sure?")}", :class => 'btn primary' %>
+</div>

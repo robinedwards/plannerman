@@ -5,7 +5,6 @@
   <%= stylesheet_link_tag    "application" %>
   <%= javascript_include_tag "application" %>
   <%= csrf_meta_tags %>
-  <link href="http://twitter.github.com/bootstrap/1.4.0/bootstrap.min.css" rel="stylesheet">
 </head>
 <body style="padding-top: 10px">
   <div class="topbar">
@@ -25,7 +24,7 @@
         <ul>
           <li class="<%= controller.controller_path == 'planners' ? 'active' : '' %>"><a href="<%= planners_path %>">Planners</a></li>
           <li class="<%= controller.controller_path == 'domains' ? 'active' : '' %>"><a href="<%= domains_path %>">Domains</a></li>
-          <li class="<%= controller.controller_path == 'subdomains' ? 'active' : '' %>"><a href="<%= subdomains_path %>">Subdomains</a></li> <li class="<%= controller.controller_path == 'problems' ? 'active' : '' %>"><a href="<%= problems_path %>">Problems</a></li></ul>
+          <li class="<%= controller.controller_path == 'subdomains' ? 'active' : '' %>"><a href="<%= subdomains_path %>">Subdomains</a></li> <li class="<%= controller.controller_path == 'problems' ? 'active' : '' %>"><a href="<%= problems_path %>">Problems</a></li> <li class="<%= controller.controller_path == 'solutions' ? 'active' : '' %>"><a href="<%= solutions_path %>">Solutions</a></li></ul>
       </div>
     </div>
     <div class="content" style="padding-top: 70px">

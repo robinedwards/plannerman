@@ -1,0 +1,13 @@
+<%= render :partial => "details", :locals => {:solution => @solution} =%>
+
+<div class="clearfix">
+   <%= f.label :notes, t("activerecord.attributes.solution.notes", :default => "Notes"), :class => :label %>
+  <div class="input">
+    <%= f.text_field :notes, :class => 'text_field' %>
+  </div>
+</div>
+
+<div class="actions">
+  <button class="btn primary" type="submit">Save</button> or
+  <%= link_to "Cancel", solutions_path, :class => 'btn primary' %>
+</div>
