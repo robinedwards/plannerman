@@ -11,13 +11,15 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120201123033) do
+ActiveRecord::Schema.define(:version => 20120201123334) do
 
   create_table "domains", :force => true do |t|
     t.string   "name"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end
+
+  add_index "domains", ["name"], :name => "index_domains_on_name", :unique => true
 
   create_table "planners", :force => true do |t|
     t.string   "name"
@@ -36,6 +38,7 @@ ActiveRecord::Schema.define(:version => 20120201123033) do
     t.datetime "updated_at",   :null => false
   end
 
+  add_index "problems", ["subdomain_id", "name"], :name => "index_problems_on_subdomain_id_and_name", :unique => true
   add_index "problems", ["subdomain_id"], :name => "index_problems_on_subdomain_id"
 
   create_table "solutions", :force => true do |t|
@@ -65,6 +68,7 @@ ActiveRecord::Schema.define(:version => 20120201123033) do
     t.datetime "updated_at", :null => false
   end
 
+  add_index "subdomains", ["domain_id", "name"], :name => "index_subdomains_on_domain_id_and_name", :unique => true
   add_index "subdomains", ["domain_id"], :name => "index_subdomains_on_domain_id"
 
 end
