@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120131181459) do
+ActiveRecord::Schema.define(:version => 20120201123033) do
 
   create_table "domains", :force => true do |t|
     t.string   "name"
@@ -26,6 +26,8 @@ ActiveRecord::Schema.define(:version => 20120131181459) do
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end
+
+  add_index "planners", ["name", "version", "parameters"], :name => "index_planners_on_name_and_version_and_parameters", :unique => true
 
   create_table "problems", :force => true do |t|
     t.string   "name"
