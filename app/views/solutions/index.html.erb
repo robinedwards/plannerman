@@ -2,13 +2,13 @@
 <table class="zebra-striped">
  <thead>
   <tr>
-    <th>ID</th>
     <th>Domain</th>
     <th>Subdomain</th>
     <th>Problem</th>
     <th>Steps</th>
     <th>Plan quality</th>
     <th>Second plan quality</th>
+    <th>Notes</th>
     <th>Created at</th>
     <th>Actions</th>
   </tr>
@@ -16,16 +16,17 @@
   <tbody>
   <% @solutions.each do |solution| -%>
    <tr>
-    <td><%= link_to solution.planner_id, solution_path(solution) %></td>
     <td><%= solution.domain.name %></td>
     <td><%= solution.subdomain.name %></td>
     <td><%= solution.problem.name %></td>
     <td><%= solution.steps %></td>
     <td><%= solution.plan_quality %></td>
     <td><%= solution.second_plan_quality %></td>
+    <td><%= solution.notes %></td>
     <td><%= solution.created_at %></td>
+    <td>
       <%= link_to "Show", solution_path(solution) %>
-      <%= link_to "Edit", edit_solution_path(solution) %>
+      <%= link_to "Add notes", edit_solution_path(solution) %>
       <%= link_to "Destroy", solution_path(solution), :method => :delete, :confirm => "#{t("web-app-theme.confirm", :default => "Are you sure?")}" %>
     </td>
     </tr>
