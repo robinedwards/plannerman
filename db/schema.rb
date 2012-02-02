@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120201123334) do
+ActiveRecord::Schema.define(:version => 20120202172927) do
 
   create_table "domains", :force => true do |t|
     t.string   "name"
@@ -24,12 +24,11 @@ ActiveRecord::Schema.define(:version => 20120201123334) do
   create_table "planners", :force => true do |t|
     t.string   "name"
     t.string   "version"
-    t.string   "parameters"
     t.datetime "created_at", :null => false
     t.datetime "updated_at", :null => false
   end
 
-  add_index "planners", ["name", "version", "parameters"], :name => "index_planners_on_name_and_version_and_parameters", :unique => true
+  add_index "planners", ["name", "version"], :name => "index_planners_on_name_and_version_and_parameters", :unique => true
 
   create_table "problems", :force => true do |t|
     t.string   "name"
@@ -60,15 +59,5 @@ ActiveRecord::Schema.define(:version => 20120201123334) do
   add_index "solutions", ["planner_id"], :name => "index_solutions_on_planner_id"
   add_index "solutions", ["problem_id"], :name => "index_solutions_on_problem_id"
   add_index "solutions", ["subdomain_id"], :name => "index_solutions_on_subdomain_id"
-
-  create_table "subdomains", :force => true do |t|
-    t.string   "name"
-    t.integer  "domain_id"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
-  end
-
-  add_index "subdomains", ["domain_id", "name"], :name => "index_subdomains_on_domain_id_and_name", :unique => true
-  add_index "subdomains", ["domain_id"], :name => "index_subdomains_on_domain_id"
 
 end
