@@ -5,6 +5,9 @@
 <label class="label"><%= t("activerecord.attributes.planner.version", :default => t("activerecord.labels.version", :default => "Version")) %>:</label>
 <p><%= @planner.version %></p>
 
+<label class="label"><%= t("activerecord.attributes.planner.notes", :default => t("activerecord.labels.notes", :default => "Notes")) %>:</label>
+<p><%= @planner.notes %></p>
+
 <div class="actions">
 <%= link_to "Back", planners_path, :class => 'btn primary'  %>
 <%= link_to "Edit", edit_planner_path(@planner), :class => 'btn primary' %>
