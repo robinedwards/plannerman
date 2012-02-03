@@ -4,8 +4,7 @@
   <tr>
     <th>Name</th>
     <th>Domain</th>
-    <th>Subdomain</th>
-    <th>Created at</th>
+    <th>Requirements</th>
     <th>Actions</th>
   </tr>
   </thead>
@@ -13,9 +12,8 @@
   <% @problems.each do |problem| -%>
    <tr>
     <td><%= link_to problem.name, problem_path(problem) %> </td>
-    <td><%= problem.subdomain.domain.name %></td>
-    <td><%= problem.subdomain.name %></td>
-    <td><%= problem.created_at %></td>
+    <td><%= problem.domain.name %></td>
+    <td><%= problem.domain.requirements.map {|r| r.name}.join(', ')  %> </td>
     <td>
       <%= link_to "Show", problem_path(problem) %>
     </td>

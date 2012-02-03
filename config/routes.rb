@@ -1,10 +1,7 @@
 PlannerMan::Application.routes.draw do
   resources :solutions
-
-  resources :subdomains
   resources :domains
   resources :problems
-
   resources :planners
 
   root :to => "home#index"

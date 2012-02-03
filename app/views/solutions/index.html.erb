@@ -3,7 +3,7 @@
  <thead>
   <tr>
     <th>Domain</th>
-    <th>Subdomain</th>
+    <th>Requirements</th>
     <th>Problem</th>
     <th>Steps</th>
     <th>Plan quality</th>
@@ -17,7 +17,7 @@
   <% @solutions.each do |solution| -%>
    <tr>
     <td><%= solution.domain.name %></td>
-    <td><%= solution.subdomain.name %></td>
+    <td><%= solution.domain.requirements.map{|r| r.name}.join(', ') %></td>
     <td><%= solution.problem.name %></td>
     <td><%= solution.steps %></td>
     <td><%= solution.plan_quality %></td>

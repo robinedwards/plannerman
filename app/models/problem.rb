@@ -1,3 +1,3 @@
 class Problem < ActiveRecord::Base
-  belongs_to :subdomain
+  belongs_to :domain
 end

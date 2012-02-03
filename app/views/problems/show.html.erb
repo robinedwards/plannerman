@@ -2,8 +2,10 @@
 <label class="label"><%= t("activerecord.attributes.problem.name", :default => t("activerecord.labels.name", :default => "Name")) %>:</label>
 <p><%= @problem.name %></p>
 
-<label class="label"><%= t("activerecord.attributes.problem.subdomain_id", :default => t("activerecord.labels.subdomain_id", :default => "Subdomain")) %>:</label>
-<p><%= @problem.subdomain_id %></p>
+<label class="label">Domain:</label>
+<p><%= @problem.domain.name %></p>
+<label class="label">Requirements:</label>
+<p><%= @problem.domain.requirements.map {|r| r.name}.join(', ')  %></p>
 <div class="actions">
 <%= link_to "Back", problems_path, :class => 'btn primary'  %>
 <%= link_to "Edit", edit_problem_path(@problem), :class => 'btn primary' %>
