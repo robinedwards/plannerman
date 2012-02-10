@@ -2,7 +2,7 @@ class SolutionsController < ApplicationController
   # GET /solutions
   # GET /solutions.json
   def index
-    @solutions = Solution.all
+    @solutions = Solution.paginate(:page => params[:page])
 
     respond_to do |format|
       format.html # index.html.erb

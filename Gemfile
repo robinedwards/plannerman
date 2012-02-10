@@ -17,6 +17,8 @@ group :assets do
   gem 'uglifier', '>= 1.0.3'
 end
 
+gem 'bootstrap-will_paginate'
+gem 'will_paginate', '~> 3.0'
 
 gem 'jquery-rails'
 

@@ -2,7 +2,7 @@ class DomainsController < ApplicationController
   # GET /domains
   # GET /domains.json
   def index
-    @domains = Domain.all
+    @domains = Domain.paginate(:page => params[:page])
 
     respond_to do |format|
       format.html # index.html.erb

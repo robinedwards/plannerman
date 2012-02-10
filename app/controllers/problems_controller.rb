@@ -2,7 +2,7 @@ class ProblemsController < ApplicationController
   # GET /problems
   # GET /problems.json
   def index
-    @problems = Problem.all
+    @problems = Problem.paginate(:page => params[:page])
 
     respond_to do |format|
       format.html # index.html.erb
