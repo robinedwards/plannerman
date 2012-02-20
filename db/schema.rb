@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120216111611) do
+ActiveRecord::Schema.define(:version => 20120220220930) do
 
   create_table "domain_requirements", :force => true do |t|
     t.integer "domain_id"
@@ -67,6 +67,7 @@ ActiveRecord::Schema.define(:version => 20120216111611) do
     t.string   "full_raw_output"
     t.datetime "created_at",          :null => false
     t.datetime "updated_at",          :null => false
+    t.string   "source"
   end
 
   add_index "solutions", ["domain_id"], :name => "index_solutions_on_domain_id"

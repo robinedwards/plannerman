@@ -1,7 +1,7 @@
 require 'find'
 require 'pp'
 
-RequirementsMap = { 
+REQUIREMENTS_MAP = { 
   'fluents' => 'numeric_fluents' # as of 2008 fluents renamed to numeric_fluents
 }
 
@@ -20,6 +20,7 @@ def _import_solution(params)
   Solution.new(
     :domain       => domain,
     :planner      => planner,
+    :source       => ENV['SOURCE'],
     :problem      => problem,
     :steps        => 99,
     :full_raw_output   => soln[:raw_output]
@@ -31,7 +32,7 @@ def _parse_solution(path)
 end
 
 def _requirements_filter(req)
-  req.map{ |r| ( RequirementsMap.has_key? r ) ? RequirementsMap[r] : r }
+  req.map{ |r| ( REQUIREMENTS_MAP.has_key? r ) ? REQUIREMENTS_MAP[r] : r }
     .grep(/(?!strip)/)
     .map{ |r| req = Requirement.find_or_create_by_name(r); req.save!; req }
 end
@@ -90,7 +91,6 @@ namespace :import do
           domain_requirements[domain] = _requirements_filter(requirements)
         end
 
-        # puts soln_path
         _import_solution({
           :planner      => planner,
           :problem      => problem.downcase,
@@ -101,8 +101,6 @@ namespace :import do
           :soln_path    => soln_path
         })
       end
-
     end
   end
-
 end

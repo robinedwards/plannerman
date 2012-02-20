@@ -9,7 +9,7 @@
     <th>Plan quality</th>
     <th>Second plan quality</th>
     <th>Notes</th>
-    <th>Created at</th>
+    <th>Source</th>
     <th>Actions</th>
   </tr>
   </thead>
@@ -23,7 +23,7 @@
     <td><%= solution.plan_quality %></td>
     <td><%= solution.second_plan_quality %></td>
     <td><%= solution.notes %></td>
-    <td><%= solution.created_at %></td>
+    <td><%= solution.source %></td>
     <td>
       <%= link_to "Show", solution_path(solution) %>
       <%= link_to "Add notes", edit_solution_path(solution) %>
