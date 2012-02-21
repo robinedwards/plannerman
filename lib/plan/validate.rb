@@ -1,10 +1,11 @@
 module Plan
 
+
   class Validate
     require 'open3'
 
     attr_reader :domain_file, :problem_file, :solution_file,
-      :first_quality, :second_quality
+      :first_quality, :second_quality, :output
 
     def initialize(params)
       @domain_file    = params[:domain_file]
@@ -37,10 +38,11 @@ module Plan
       @second_quality = self.read_quality_value(stdout).to_i
     end
 
-    def read_quality_value(result)
-      match = /Final value:\s(\d+)\s*/.match(result)
+    def read_quality_value(output)
+      match = /Final value:\s(\d+)\s*/.match(output)
       if match.nil?
-        raise "Couldn't extract quality from " + result
+        @output = output
+        raise Plan::Validate::Error
       else
         return match.captures.first
       end
@@ -51,11 +53,15 @@ module Plan
       stdin, stdout, stderr = Open3.popen3(cmd)
 
       if stderr = stderr.readlines.join and  stderr.length > 0
-        raise "Error running validator #{cmd}: " + stderr
+        @output = (stdout.readlines.join) + "\nCMD:#{cmd}\nSTDERR:\n" + stderr
+        raise Plan::Validate::ExecutionError
       end
 
       return stdout.readlines.join
     end
 
   end
+
+  class Validate::Error < RuntimeError; end
+  class Validate::ExecutionError < RuntimeError; end
 end
