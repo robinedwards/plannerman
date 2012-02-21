@@ -7,4 +7,8 @@ class Domain < ActiveRecord::Base
   validates_uniqueness_of :directory
   has_many  :domain_requirements
   has_many  :requirements, :class_name => 'Requirement', :through => :domain_requirements
+
+  def path
+    [self.directory, self.file].join('/')
+  end
 end
