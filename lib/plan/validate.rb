@@ -1,11 +1,9 @@
 module Plan
-
-
   class Validate
     require 'open3'
 
     attr_reader :domain_file, :problem_file, :solution_file,
-      :first_quality, :second_quality, :output
+      :first_quality, :second_quality, :output, :time, :steps
 
     def initialize(params)
       @domain_file    = params[:domain_file]
@@ -28,6 +26,26 @@ module Plan
 
       unless File.readable? @solution_file
         raise "#{@solution_file} is not readable"
+      end
+    end
+
+    def parse()
+      @steps = 0;
+      @time  = -1;
+      file = File.open(@solution_file)
+      while (l = file.gets)
+        case l
+        when /^\s*;\s*time\s*(\d+)/i
+          @time = $1.to_i
+        when /^\s*;/
+          'comment'
+        when /\d/
+          @steps = @steps + 1
+        when /^\(/
+          @steps = @steps + 1
+        else 
+          raise "Don't know how to parse: "+l
+        end
       end
     end
 

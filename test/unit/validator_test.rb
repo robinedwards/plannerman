@@ -12,8 +12,14 @@ class TC_PlanValidate < Test::Unit::TestCase
     });
 
     plan.validate
+
     assert_equal(8, plan.first_quality)
     assert_equal(8, plan.second_quality)
+
+    plan.parse
+
+    assert_equal(230, plan.time)
+    assert_equal(8, plan.steps)
   end
 
 end
