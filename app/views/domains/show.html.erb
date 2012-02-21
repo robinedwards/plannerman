@@ -1,8 +1,8 @@
 
 <label class="label"><%= t("activerecord.attributes.domain.name", :default => t("activerecord.labels.name", :default => "Name")) %>:</label>
 <p><%= @domain.name %></p>
-<label class="label">File</label>
-<p><%= @domain.domain_file %></p>
+<label class="label">Path</label>
+<p><%= [@domain.directory, @domain.file].join('/') %></p>
 <div class="actions">
 <%= link_to "Back", domains_path, :class => 'btn primary'  %>
 <%= link_to "Edit", edit_domain_path(@domain), :class => 'btn primary' %>
