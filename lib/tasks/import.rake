@@ -13,7 +13,7 @@ def lookup_problem(problem_name, domain)
     unless File.exists? problem_path
       raise "No such file " + problem_path
     end
-    problem.description = IO.read(problem_path)
+    problem.description = IO.read(problem_path).strip
   end
 
   problem.save!
@@ -54,16 +54,19 @@ def _import_solution(params)
     notes = plan.output
   end
 
+  plan.parse
+
   Solution.new(
     :domain       => domain,
     :planner      => planner,
     :source       => ENV['SOURCE'],
     :problem      => problem,
-    :steps        => 99,
+    :steps        => plan.steps,
     :notes        => notes,
+    :time         => plan.time,
     :plan_quality             => fq,
     :second_plan_quality      => sq,
-    :full_raw_output          => IO.read(params[:soln_path])
+    :full_raw_output          => IO.read(params[:soln_path]).strip
   ).save!
 
   puts params[:soln_path] + " imported ok"

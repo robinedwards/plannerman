@@ -37,8 +37,8 @@ module Plan
         case l
         when /^\s*;\s*time\s*(\d+)/i
           @time = $1.to_i
-        when /^\s*;/
-          'comment'
+        when /^\s*;?/
+          'skip comments or ws'
         when /\d/
           @steps = @steps + 1
         when /^\(/
