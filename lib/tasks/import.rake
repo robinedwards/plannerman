@@ -1,45 +1,56 @@
 require 'find'
 require 'pp'
 
-REQUIREMENTS_MAP = { 
-  'fluents' => 'numeric_fluents' # as of 2008 fluents renamed to numeric_fluents
-}
+def lookup_problem(problem_name, domain)
+  problem_number = /pfile(\d+)/.match(problem_name).captures.first
+  problem_name   = sprintf("pfile%02d.pddl", problem_number)
+
+  problem = Problem.find_or_create_by_name_and_domain_id(problem_name, domain.id)
+
+  if problem.description.nil?
+    problem_path = [ENV['DOMAIN_DIRECTORY'], domain.directory, problem_name].join('/')
+    unless File.exists? problem_path
+      raise "No such file " + problem_path
+    end
+    problem.description = IO.read(problem_path)
+  end
+
+  problem.save!
+  return problem
+end
 
 # utility functions
 def _import_solution(params)
-  domain = Domain.find_or_create_by_name(:name => params[:domain], :domain_file => params[:domain_file])
+  domain = Domain.find_or_create_by_name(:name => params[:domain], :directory => params[:domain_directory], :file => 'domain.pddl')
   domain.requirements =  params[:requirements]
   domain.save!
-  problem = Problem.find_or_create_by_name_and_domain_id(params[:problem], domain.id)
-  problem.save!
+
   planner = Planner.find_or_create_by_name(params[:planner], :version => '?')
   planner.save!
-
-  soln = _parse_solution(params[:soln_path])
 
   Solution.new(
     :domain       => domain,
     :planner      => planner,
     :source       => ENV['SOURCE'],
-    :problem      => problem,
+    :problem      => lookup_problem(params[:problem], domain),
     :steps        => 99,
-    :full_raw_output   => soln[:raw_output]
+    :full_raw_output   => IO.read(params[:soln_path])
   ).save!
 end
 
-def _parse_solution(path)
-  { :raw_output => IO.read(path) }
-end
-
 def _requirements_filter(req)
-  req.map{ |r| ( REQUIREMENTS_MAP.has_key? r ) ? REQUIREMENTS_MAP[r] : r }
+  reqmap = {
+    'fluents' => 'numeric_fluents' # as of 2008 fluents renamed to numeric_fluents
+  };
+
+  req.map{ |r| ( reqmap.has_key? r ) ? reqmap[r] : r }
     .grep(/(?!strip)/)
     .map{ |r| req = Requirement.find_or_create_by_name(r); req.save!; req }
 end
 
 def _get_domain_requirements(domain_path)
   unless File.exists? domain_path
-    p "Couldn't find #{domain_path}"
+    puts "Couldn't find #{domain_path}"
     return []
   end
 
@@ -84,10 +95,11 @@ namespace :import do
         }.delete_if{|i| i == 'Strips'}
 
         # path part
-        domain_file = (domain.join.downcase)+'/domain.pddl'
+        domain_directory = domain.join.downcase
         domain = domain.join(' ')
+
         unless domain_requirements.has_key? domain
-          requirements = _get_domain_requirements(ENV['DOMAIN_DIRECTORY']+'/'+domain_file)
+          requirements = _get_domain_requirements(ENV['DOMAIN_DIRECTORY']+'/'+domain_directory+'/domain.pddl')
           domain_requirements[domain] = _requirements_filter(requirements)
         end
 
@@ -97,8 +109,8 @@ namespace :import do
           :requirements => domain_requirements[domain],
           :notes        => notes,
           :domain       => domain,
-          :domain_file  => domain_file,
-          :soln_path    => soln_path
+          :soln_path    => soln_path,
+          :domain_directory  => domain_directory
         })
       end
     end
