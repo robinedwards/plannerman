@@ -1,4 +1,5 @@
 require 'find'
+require 'plan/validate'
 require 'pp'
 
 def lookup_problem(problem_name, domain)
@@ -27,15 +28,45 @@ def _import_solution(params)
 
   planner = Planner.find_or_create_by_name(params[:planner], :version => '?')
   planner.save!
+  problem = lookup_problem(params[:problem], domain)
+
+  plan = Plan::Validate.new({
+    :tolerance      => 0.01,
+    :domain_file    => ENV['DOMAIN_DIRECTORY']+'/'+domain.path,
+    :problem_file   => ENV['DOMAIN_DIRECTORY']+'/'+problem.path,
+    :solution_file  => params[:soln_path],
+  });
+
+  begin
+    plan.validate
+    fq = plan.first_quality
+    sq = plan.second_quality
+    notes = ''
+  rescue Plan::Validate::Error
+    puts 'invalid plan'
+    fq = -1
+    sq = -1
+    notes = plan.output
+  rescue Plan::Validate::ExecutionError
+    puts 'execution error'
+    fq = -2
+    sq = -2
+    notes = plan.output
+  end
 
   Solution.new(
     :domain       => domain,
     :planner      => planner,
     :source       => ENV['SOURCE'],
-    :problem      => lookup_problem(params[:problem], domain),
+    :problem      => problem,
     :steps        => 99,
-    :full_raw_output   => IO.read(params[:soln_path])
+    :notes        => notes,
+    :plan_quality             => fq,
+    :second_plan_quality      => sq,
+    :full_raw_output          => IO.read(params[:soln_path])
   ).save!
+
+  puts params[:soln_path] + " imported ok"
 end
 
 def _requirements_filter(req)
