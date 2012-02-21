@@ -6,6 +6,9 @@
 <p><%= @problem.domain.name %></p>
 <label class="label">Requirements:</label>
 <p><%= @problem.domain.requirements.map {|r| r.name}.join(', ')  %></p>
+<label class="label">Description:</label>
+</br>
+<pre><%= @problem.description %></pre>
 <div class="actions">
 <%= link_to "Back", problems_path, :class => 'btn primary'  %>
 <%= link_to "Edit", edit_problem_path(@problem), :class => 'btn primary' %>

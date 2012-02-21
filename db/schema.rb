@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120220220930) do
+ActiveRecord::Schema.define(:version => 20120221112504) do
 
   create_table "domain_requirements", :force => true do |t|
     t.integer "domain_id"
@@ -22,9 +22,10 @@ ActiveRecord::Schema.define(:version => 20120220220930) do
 
   create_table "domains", :force => true do |t|
     t.string   "name"
-    t.datetime "created_at",  :null => false
-    t.datetime "updated_at",  :null => false
-    t.string   "domain_file"
+    t.datetime "created_at", :null => false
+    t.datetime "updated_at", :null => false
+    t.string   "directory"
+    t.string   "file"
   end
 
   add_index "domains", ["name"], :name => "index_domains_on_name", :unique => true
@@ -42,8 +43,9 @@ ActiveRecord::Schema.define(:version => 20120220220930) do
   create_table "problems", :force => true do |t|
     t.string   "name"
     t.integer  "domain_id"
-    t.datetime "created_at", :null => false
-    t.datetime "updated_at", :null => false
+    t.datetime "created_at",  :null => false
+    t.datetime "updated_at",  :null => false
+    t.string   "description"
   end
 
   add_index "problems", ["domain_id", "name"], :name => "index_problems_on_domain_id_and_name", :unique => true
