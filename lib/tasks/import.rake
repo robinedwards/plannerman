@@ -162,13 +162,10 @@ namespace :import do
         planner_name      = parts.pop
 
         if parts.first == 'PIPESWORLD'
-          parts = parts
           parts[0] = 'PIPES'
         elsif parts.first == 'PROMELA'
           parts.shift
-        elsif parts.first == 'PSR'
-          ''
-        else
+        elsif parts.first != 'PSR'
           # drop middle dir as not used in naming
           h  = parts.shift
           parts.shift
@@ -179,18 +176,39 @@ namespace :import do
           parts = parts.grep(/(?!=STRIPS)/)
         end
 
-        domain_directory  = parts.join.gsub('_', '').downcase.gsub('strips','').gsub('nontemporal','')
-        domain_name       = parts.join(' ').gsub('_',' ').split(' ').map {|i| i.capitalize}.join(' ')
+        domain_directory  = parts.uniq.join.gsub('_', '').downcase.gsub('strips','').gsub('nontemporal','')
+        domain_name       = parts.join(' ').gsub('_',' ').split(' ').uniq.map {|i| i.capitalize}.join(' ')
+          domain_dir_map = {
+            "pipesnotankagetemporaltemporal" => 'pipesnotankagetemporal',
+            "pipesnotankagetemporaldeadlinestemporaltimedliterals" => 'pipesnotankagedeadlinestils',
+            "pipesnotankagetemporaldeadlinescotemporal" => 'pipesnotankagedeadlinescompiled',
+            "pipestankagetemporaltemporal" => 'pipestankagetemporal',
+            "opticaltelegraphderivedpredicadlderivedpredicates" => 'opticaltelegraphdpsadl',
+            "opticaltelegraphderivedpredicderivedpredicates" => 'opticaltelegraphdps',
+            "opticaltelegraphfluentsadlfluents" => 'opticaltelegraphfluentsadl',
+            "philosophersderivedpredicatesadlderivedpredicates" => 'philosophersdpsadl',
+            "philosophersderivedpredicatesderivedpredicates" => 'philosophersdps',
+            "philosophersfluentsadlfluents" => 'philosophersfluentsdpsadl',
+            "psrlargeadlderivedpredicates" => 'psrlargeadl',
+            "psrmiddleadlderivedpredicates" => 'psrmiddledpsadl',
+            "psrmiddlederivedpredicates" => 'psrmiddledps',
+            "settlersfluents" => 'settlersnumeric',
+            "umtsfluentstemporal" => 'umtstemporalfluents',
+            "umtsfluentstemporaltimedli" => 'mtstimewindowstil'
+          }
+
+          if domain_dir_map[domain_directory]
+            domain_directory = domain_dir_map[domain_directory]
+          end
 
         i = {:problem => problem_number, :planner_name => planner_name, :domain_directory => domain_directory, :domain_name => domain_name }
 
-        unless Dir.exists?(ENV['DOMAIN_DIRECTORY']+'/'+domain_directory)
- #         puts 'no such domain directory ' + domain_directory
-          no_exist[domain_directory] = soln_path
+        if Dir.exists?(ENV['DOMAIN_DIRECTORY']+'/'+domain_directory)
+          no_exist[domain_directory] = domain_name
         end
 
       end
-      pp no_exist.keys.count, no_exist.keys
+      pp no_exist.keys.count, no_exist
     end
   end
 end
