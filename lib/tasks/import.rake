@@ -161,52 +161,53 @@ namespace :import do
         problem_number    = /(\d+)/.match(parts.pop).captures.first.to_i
         planner_name      = parts.pop
 
-        if parts.first == 'PIPESWORLD'
-          parts[0] = 'PIPES'
-        elsif parts.first == 'PROMELA'
-          parts.shift
-        elsif parts.first != 'PSR'
-          # drop middle dir as not used in naming
-          h  = parts.shift
-          parts.shift
-          parts  = [ h, parts ]
+        parts2 = []
+        parts.each do |i|
+          i.downcase!
+          parts2.concat(i.split(/_|\s+/))
         end
 
-        if parts.first == 'SATELLITE' or parts.first == 'AIRPORT' or parts.first == 'PIPES'
-          parts = parts.grep(/(?!=STRIPS)/)
+        parts = parts2.uniq;
+        unless parts[first] == 'airport'
+          parts.delete('strips')
+        end
+        parts.delete('nontemporal')
+
+        if parts.first == 'pipesworld'
+          parts[0] = 'pipes'
+        elsif parts.first == 'promela'
+          parts.shift
         end
 
-        domain_directory  = parts.uniq.join.gsub('_', '').downcase.gsub('strips','').gsub('nontemporal','')
-        domain_name       = parts.join(' ').gsub('_',' ').split(' ').uniq.map {|i| i.capitalize}.join(' ')
-          domain_dir_map = {
-            "pipesnotankagetemporaltemporal" => 'pipesnotankagetemporal',
-            "pipesnotankagetemporaldeadlinestemporaltimedliterals" => 'pipesnotankagedeadlinestils',
-            "pipesnotankagetemporaldeadlinescotemporal" => 'pipesnotankagedeadlinescompiled',
-            "pipestankagetemporaltemporal" => 'pipestankagetemporal',
-            "opticaltelegraphderivedpredicadlderivedpredicates" => 'opticaltelegraphdpsadl',
-            "opticaltelegraphderivedpredicderivedpredicates" => 'opticaltelegraphdps',
-            "opticaltelegraphfluentsadlfluents" => 'opticaltelegraphfluentsadl',
-            "philosophersderivedpredicatesadlderivedpredicates" => 'philosophersdpsadl',
-            "philosophersderivedpredicatesderivedpredicates" => 'philosophersdps',
-            "philosophersfluentsadlfluents" => 'philosophersfluentsdpsadl',
-            "psrlargeadlderivedpredicates" => 'psrlargeadl',
-            "psrmiddleadlderivedpredicates" => 'psrmiddledpsadl',
-            "psrmiddlederivedpredicates" => 'psrmiddledps',
-            "settlersfluents" => 'settlersnumeric',
-            "umtsfluentstemporal" => 'umtstemporalfluents',
-            "umtsfluentstemporaltimedli" => 'mtstimewindowstil'
-          }
-
-          if domain_dir_map[domain_directory]
-            domain_directory = domain_dir_map[domain_directory]
+        if parts.index('temporal') != nil
+          parts.delete('temporal')
+          if parts.index('fluents')
+            parts.delete('fluents')
+            parts.push('temporal', 'fluents')
+          else
+            parts.push('temporal')
           end
+        end
+
+        rewrite_map = {
+          'timedli' => 'tils',
+          'timedliterals' => 'tils',
+          'compiled' => 'co',
+          'compi' => 'co',
+          'derivedpredicates' => 'dps',
+          'derivedpredic' => 'dps',
+        }
+
+        domain_directory  = parts.map {|l| ( rewrite_map.has_key? l ) ? rewrite_map[l] : l  }.join
+        domain_name       = parts.map {|i| i.capitalize}.join(' ')
 
         i = {:problem => problem_number, :planner_name => planner_name, :domain_directory => domain_directory, :domain_name => domain_name }
 
-        if Dir.exists?(ENV['DOMAIN_DIRECTORY']+'/'+domain_directory)
+        unless Dir.exists?(ENV['DOMAIN_DIRECTORY']+'/'+domain_directory)
           no_exist[domain_directory] = domain_name
+        else
+       #   p domain_directory + ' OK'
         end
-
       end
       pp no_exist.keys.count, no_exist
     end
