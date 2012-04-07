@@ -1,122 +1,7 @@
 require 'find'
 require 'plan/validate'
+require 'plan/imprt'
 require 'pp'
-
-class Plan::Importer
-  attr_reader :domain_name, :domain_directory, :soln_path, :problem_number, :problem_path, :source
-
-  def initialize(params)
-    @planner          = params[:planner]
-    @source           = params[:planner]
-    @domain_base_dir  = params[:domain_base_dir]
-    @domain_name      = params[:domain_name]
-    @domain_directory = params[:domain_directory]
-    @problem_number   = params[:problem_number]
-    @soln_path        = params[:soln_path]
-
-    @domain_file_path = [@domain_base_dir, @domain_directory, 'domain.pddl'].join('/')
-
-    unless File.readable? @soln_path
-      raise "#{@soln_path} is not readable"
-    end
-
-    unless Dir.exist? @domain_base_dir
-      raise "#{@domain_file_path} is not a directory"
-    end
-
-    unless File.readable? @domain_file_path
-      raise "#{@domain_file_path} is not readable"
-    end
-  end
-
-  def import
-    self.find_or_import_requirements
-    self.find_or_import_domain
-    self.find_or_import_problem
-    self.validate_plan
-    self.import_plan
-  end
-
-  def find_or_import_requirements
-    domain_description = IO.read(@domain_file_path).gsub(/;.+$/, '') # strip comments
-    unless m = /\(:requirements\s*([\s\:\w\-]+)\s*\)/im.match(domain_description)
-      return []
-    end
-
-    requirements =  m.captures[0].gsub(':', '').split(/\s+/).map { |k| k.strip }
-
-    # filter requirements
-     reqmap = {
-      'fluents' => 'numeric_fluents' # as of 2008 fluents renamed to numeric_fluents
-    };
-
-    @requirements = requirements.map{ |r| ( reqmap.has_key? r ) ? reqmap[r] : r }
-      .grep(/(?!strip)/)
-      .map{ |r| r = Requirement.find_or_create_by_name(r); r.save!; r }
-  end
-
-  def find_or_import_domain
-    @domain = Domain.find_or_create_by_name(:name => @domain_name, :directory => @domain_directory, :file => 'domain.pddl')
-
-    unless @requirements.nil?
-      @domain.requirements = @requirements
-    end
-
-    @domain.save!
-  end
-
-  def find_or_import_problem
-    problem_name = sprintf("pfile%02d.pddl", @problem_number)
-
-    @problem = Problem.find_or_create_by_name_and_domain_id(problem_name, @domain.id)
-    @problem_file_path = [@domain_base_dir, @domain.directory, problem_name].join('/')
-
-    if @problem.description.nil?
-      unless File.exists? @problem_file_path
-        raise "No such problem file " + @problem_file_path
-      end
-      @problem.description = IO.read(@problem_file_path).strip
-    end
-
-    @problem.save!
-  end
-
-  def validate_plan
-    @plan = Plan::Validate.new({
-      :tolerance      => 0.01,
-      :domain_file    => @domain_file_path,
-      :problem_file   => @problem_file_path,
-      :solution_file  => @soln_path,
-    });
-
-    begin
-      @plan.validate
-    rescue Plan::Validate::Error
-      puts "validator output error, invalid plan?: #{@soln_path} output:\n#{@plan.output}"
-    rescue Plan::Validate::ExecutionError
-      puts "validator execution error for: #{@soln_path} output:\n#{@plan.output}"
-    end
-
-    @plan.parse
-  end
-
-  def import_plan
-    Solution.new(
-      :domain       => @domain,
-      :planner      => @planner,
-      :source       => @source,
-      :problem      => @problem,
-      :steps        => @plan.steps,
-      :notes        => @plan.output,
-      :time         => @plan.time,
-      :plan_quality             => @plan.first_quality,
-      :second_plan_quality      => @plan.second_quality,
-      :full_raw_output          => IO.read(@soln_path).strip
-    ).save!
-
-    puts "imported #{@soln_path}"
-  end
-end
 
 namespace :import do
 
@@ -139,7 +24,7 @@ namespace :import do
 
         problem_number = /pfile(\d+)/.match(problem).captures.first
 
-        Plan::Importer.new({
+        Plan::Import.new({
           :planner => planner,
           :source  => 'IPC 2003',
           :domain_base_dir  => ENV['DOMAIN_DIRECTORY'],
@@ -155,7 +40,7 @@ namespace :import do
 
   task :ipc_2004_results => :environment do
     ActiveRecord::Base.transaction do
-      no_exist = {}
+      results = {}
       Find.find(ENV['PLAN_DIRECTORY']).grep(/SOLN$/) do |soln_path|
         parts     = soln_path.sub(ENV['PLAN_DIRECTORY'], '').split('/')
         problem_number    = /(\d+)/.match(parts.pop).captures.first.to_i
@@ -168,7 +53,7 @@ namespace :import do
         end
 
         parts = parts2.uniq;
-        unless parts[first] == 'airport'
+        unless parts.first == 'airport'
           parts.delete('strips')
         end
         parts.delete('nontemporal')
@@ -201,15 +86,69 @@ namespace :import do
         domain_directory  = parts.map {|l| ( rewrite_map.has_key? l ) ? rewrite_map[l] : l  }.join
         domain_name       = parts.map {|i| i.capitalize}.join(' ')
 
+        domain_directory_map = {
+          "airportstrips"                         => "airport",
+          "airporttimewindowsadltilstemporal"     => "airportadltimewindows",
+          "airporttimewindowsstripstilstemporal"  => "airportstripstimewindows",
+          "airporttimewindowscostripstemporal"    => 'airportstripstimewindowscompiled',
+          "pipesnotankagedeadlinestilstemporal"   => "pipesnotankagedeadlinestils",
+          "pipesnotankagedeadlinescotemporal"     => "pipesnotankagedeadlinescompiled",
+          "opticaltelegraphdpsadldps"             => "opticaltelegraphdpsadl",
+          "opticaltelegraphdpsdps"                => "opticaltelegraphdps",
+          "philosophersfluentsadl"                => "philosophersfluentsdpsadl",
+          "psrlargeadldps"                        => "psrlargeadl",
+          "psrmiddleadldps"                       => "psrmiddledpsadl",
+          "psrmiddlecoadl"                        => "psrmiddlecompiledadl",
+          "satellitecomplextemporalfluents"                 => "satellitecomplex",
+          "satellitecomplextimewindowstilstemporalfluents"  => "satellitecomplextimewindows",
+          "satellitecomplextimewindowscotemporalfluents"    => "satellitecomplextimewindowscompiled",
+          "satellitenumericfluents"                         => "satellitenumeric",
+          "satellitetimetemporal"                           => "satellitetimeipc4",
+          "satellitetimetimewindowstilstemporal"            => "satellitetimetimewindows",
+          "satellitetimetimewindowscotemporal"              => "satellitetimetimewindowscompilde",
+          "settlersipc3fluents"                             => "settlersnumeric",
+          "umtsflawtemporalfluents"                         => "umtsflawtemporal",
+          "umtsflawtimewindowstilstemporalfluents"          => "umtsflawtimewindowsfluentstil",
+          "umtsflawtimewindowscotemporalfluents"            => "umtsflawtimewindowscompiled",
+          "umtstimewindowstilstemporalfluents"              => "umtstimewindowstil",
+          "umtstimewindowscotemporalfluents"                => "mtstimewindowscompiledtemporalfluents"
+        }
         i = {:problem => problem_number, :planner_name => planner_name, :domain_directory => domain_directory, :domain_name => domain_name }
 
-        unless Dir.exists?(ENV['DOMAIN_DIRECTORY']+'/'+domain_directory)
-          no_exist[domain_directory] = domain_name
+        domain_directory =(domain_directory_map.has_key? domain_directory) ? domain_directory_map[domain_directory] : domain_directory
+
+          if results[domain_directory] == nil
+            results[domain_directory] = { 'validated' => 0, 'failed' => 0 }
+          end
+
+        if Dir.exists?(ENV['DOMAIN_DIRECTORY']+'/'+domain_directory)
+          p domain_directory + ' OK'
+          planner = Planner.find_or_create_by_name(planner_name, :version => '?')
+          planner.save!
+
+          plan = Plan::Import.new({
+            :planner => planner,
+            :source  => 'IPC 2004',
+            :domain_base_dir  => ENV['DOMAIN_DIRECTORY'],
+            :domain_name      => domain_name,
+            :domain_directory => domain_directory,
+            :problem_number   => problem_number,
+            :soln_path        => soln_path
+          })
+
+          plan.import
+
+
+          if plan.validated_ok
+            results[domain_directory]['validated'].succ
+          else
+            results[domain_directory]['failed'].succ
+          end
         else
-       #   p domain_directory + ' OK'
+            results[domain_directory]['failed'].succ
         end
       end
-      pp no_exist.keys.count, no_exist
+      pp results
     end
   end
 end
