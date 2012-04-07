@@ -11,6 +11,8 @@ module Plan
       @solution_file  = params[:solution_file]
       @validator      = params[:validator] || '/home/rob/dev/Kings/distplantester/VAL-4.2.08/validate'
       @tolerance      = params[:tolerance]
+      @first_quality = 0
+      @second_quality = 0
 
       unless File.executable? @validator
         raise "#{@validator} is not executable"
@@ -70,12 +72,7 @@ module Plan
       cmd = "#{@validator} #{flags} #{@domain_file} #{@problem_file} #{@solution_file}"
       stdin, stdout, stderr = Open3.popen3(cmd)
 
-      if stderr = stderr.readlines.join and  stderr.length > 0
-        @output = (stdout.readlines.join) + "\nCMD:#{cmd}\nSTDERR:\n" + stderr
-        raise Plan::Validate::ExecutionError
-      end
-
-      return stdout.readlines.join
+      return stderr.readlines.join + stdout.readlines.join
     end
 
   end
